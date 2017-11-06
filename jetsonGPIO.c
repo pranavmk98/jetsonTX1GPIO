@@ -5,10 +5,11 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <iostream>
 #include <fcntl.h>
 #include <poll.h>
 #include "jetsonGPIO.h"
-
+using namespace std;
 
 //
 // gpioExport
@@ -18,7 +19,6 @@ int gpioExport ( jetsonGPIO gpio )
 {
     int fileDescriptor, length;
     char commandBuffer[MAX_BUF];
-
     fileDescriptor = open(SYSFS_GPIO_DIR "/export", O_WRONLY);
     if (fileDescriptor < 0) {
         char errorBuffer[128] ;

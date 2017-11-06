@@ -43,8 +43,8 @@ int main(int argc, char *argv[]){
     jetsonTX1GPIONumber redLED = gpio219 ;     // Ouput
     jetsonTX1GPIONumber pushButton = gpio38 ; // Input
     // Make the button and led available in user space
-    gpioExport(pushButton) ;
-    gpioExport(redLED) ;
+    gpioExport(pushButton);
+    gpioExport(redLED);
     gpioSetDirection(pushButton,inputPin) ;
     gpioSetDirection(redLED,outputPin) ;
     // Reverse the button wiring; this is for when the button is wired
@@ -53,14 +53,14 @@ int main(int argc, char *argv[]){
 
 
     // Flash the LED 5 times
-    for(int i=0; i<5; i++){
+    /*for(int i=0; i<5; i++){
         cout << "Setting the LED on" << endl;
         gpioSetValue(redLED, on);
         usleep(200000);         // on for 200ms
         cout << "Setting the LED off" << endl;
         gpioSetValue(redLED, off);
         usleep(200000);         // off for 200ms
-    }
+    }*/
 
     // Wait for the push button to be pressed
     cout << "Please press the button! ESC key quits the program" << endl;
