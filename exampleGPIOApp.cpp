@@ -40,8 +40,8 @@ int main(int argc, char *argv[]){
     cout << "Testing the GPIO Pins" << endl;
 
 
-    jetsonTX1GPIONumber redLED = gpio219 ;     // Ouput
-    jetsonTX1GPIONumber pushButton = gpio38 ; // Input
+    int redLED = 398;     // Ouput
+    int pushButton = 481; // Input
     // Make the button and led available in user space
     gpioExport(pushButton);
     gpioExport(redLED);
@@ -67,23 +67,20 @@ int main(int argc, char *argv[]){
 
     unsigned int value = low;
     int ledValue = low ;
+    bool running = false;
     // Turn off the LED
     gpioSetValue(redLED,low) ;
     while(getkey() != 27) {
         gpioGetValue(pushButton, &value) ;
         // Useful for debugging
         // cout << "Button " << value << endl;
-        if (value==high && ledValue != high) {
-            // button is pressed ; turn the LED on
-            ledValue = high ;
-            gpioSetValue(redLED,on) ;
-        } else {
-            // button is *not* pressed ; turn the LED off
-            if (ledValue != low) {
-                ledValue = low ;
-                gpioSetValue(redLED,off) ;
+        if (value==high) {
+            if (running) {
+                system("script_stop.sh");
+            } else {
+                system("script_run.sh");
             }
-
+            // button is pressed ; turn the LED on
         }
         usleep(1000); // sleep for a millisecond
     }
