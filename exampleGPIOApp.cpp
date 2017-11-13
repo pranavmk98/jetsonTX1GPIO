@@ -37,17 +37,17 @@ int getkey() {
 
 int main(int argc, char *argv[]){
 
-    cout << "Testing the GPIO Pins" << endl;
+    cout << "Starting Logs" << endl;
     system("echo hello");
     system("./script_run.sh");
 
-    int redLED = 398;     // Ouput
+    /* int redLED = 398;     // Ouput */
     int pushButton = 481; // Input
     // Make the button and led available in user space
     gpioExport(pushButton);
-    gpioExport(redLED);
+    /* gpioExport(redLED); */
     gpioSetDirection(pushButton,inputPin) ;
-    gpioSetDirection(redLED,outputPin) ;
+    /* gpioSetDirection(redLED,outputPin) ; */
     // Reverse the button wiring; this is for when the button is wired
     // with a pull up resistor
     // gpioActiveLow(pushButton, true);
@@ -67,27 +67,30 @@ int main(int argc, char *argv[]){
     cout << "Please press the button! ESC key quits the program" << endl;
 
     unsigned int value = low;
-    int ledValue = low ;
+    /* int ledValue = low ; */
     bool running = false;
     // Turn off the LED
-    gpioSetValue(redLED,low) ;
+    /* gpioSetValue(redLED,low) ; */
     while(getkey() != 27) {
         gpioGetValue(pushButton, &value) ;
         // Useful for debugging
-        // cout << "Button " << value << endl;
+        cout << "Button " << value << endl;
         if (value==high) {
             if (running) {
                 system("script_stop.sh");
+                running = false;
             } else {
                 system("script_run.sh");
+                cout<<"Logs STARTED" <<endl;
+                running = true;
             }
             // button is pressed ; turn the LED on
         }
         usleep(1000); // sleep for a millisecond
     }
 
-    cout << "GPIO example finished." << endl;
-    gpioUnexport(redLED);     // unexport the LED
+    cout << "Logging Finished" << endl;
+    /* gpioUnexport(redLED);     // unexport the LED */
     gpioUnexport(pushButton);      // unexport the push button
     return 0;
 }
