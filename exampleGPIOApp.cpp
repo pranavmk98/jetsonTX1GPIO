@@ -38,7 +38,8 @@ int getkey() {
 int main(int argc, char *argv[]){
 
     cout << "Testing the GPIO Pins" << endl;
-
+    system("echo hello");
+    system("./script_run.sh");
 
     int redLED = 398;     // Ouput
     int pushButton = 481; // Input
