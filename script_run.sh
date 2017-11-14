@@ -1,6 +1,6 @@
 #!/bin/bash
 source /opt/ros/kinetic/setup.bash
-cd ~/RoboBuggy/RoboBuggy/Software/real_time/ROS_RoboBuggy/
+cd ~/RoboBuggy/Software/real_time/ROS_RoboBuggy/
 source devel/setup.bash
 ls
 cd ../../

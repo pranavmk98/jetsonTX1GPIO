@@ -38,8 +38,6 @@ int getkey() {
 int main(int argc, char *argv[]){
 
     cout << "Starting Logs" << endl;
-    system("echo hello");
-    system("./script_run.sh");
 
     /* int redLED = 398;     // Ouput */
     int pushButton = 481; // Input
@@ -74,15 +72,22 @@ int main(int argc, char *argv[]){
     while(getkey() != 27) {
         gpioGetValue(pushButton, &value) ;
         // Useful for debugging
-        cout << "Button " << value << endl;
+        //cout << "Button " << value << endl;
         if (value==high) {
             if (running) {
-                system("script_stop.sh");
+                system("./script_stop.sh");
+		cout<<"Logs STOPPED"<<endl;
                 running = false;
+		while(value==high) {
+			gpioGetValue(pushButton, &value) ;
+		}
             } else {
-                system("script_run.sh");
+                system("./script_run.sh");
                 cout<<"Logs STARTED" <<endl;
                 running = true;
+		while(value==high) {
+			gpioGetValue(pushButton, &value) ;
+		}
             }
             // button is pressed ; turn the LED on
         }
