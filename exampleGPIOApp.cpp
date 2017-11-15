@@ -37,15 +37,16 @@ int getkey() {
 
 int main(int argc, char *argv[]){
 
-    cout << "Starting Logs" << endl;
+//    cout << "Starting Logs" << endl;
 
-    /* int redLED = 398;     // Ouput */
+    int redLED = 398;     // Ouput */
     int pushButton = 481; // Input
     // Make the button and led available in user space
+    gpioUnexport(redLED);
     gpioExport(pushButton);
-    /* gpioExport(redLED); */
+    gpioExport(redLED); 
     gpioSetDirection(pushButton,inputPin) ;
-    /* gpioSetDirection(redLED,outputPin) ; */
+    gpioSetDirection(redLED,outputPin) ;
     // Reverse the button wiring; this is for when the button is wired
     // with a pull up resistor
     // gpioActiveLow(pushButton, true);
@@ -65,10 +66,10 @@ int main(int argc, char *argv[]){
     cout << "Please press the button! ESC key quits the program" << endl;
 
     unsigned int value = low;
-    /* int ledValue = low ; */
+    //    ledValue = low ; 
     bool running = false;
     // Turn off the LED
-    /* gpioSetValue(redLED,low) ; */
+    gpioSetValue(redLED,low) ; 
     while(getkey() != 27) {
         gpioGetValue(pushButton, &value) ;
         // Useful for debugging
@@ -78,6 +79,7 @@ int main(int argc, char *argv[]){
                 system("./script_stop.sh");
 		cout<<"Logs STOPPED"<<endl;
                 running = false;
+		gpioSetValue(redLED, off);
 		while(value==high) {
 			gpioGetValue(pushButton, &value) ;
 		}
@@ -85,6 +87,7 @@ int main(int argc, char *argv[]){
                 system("./script_run.sh");
                 cout<<"Logs STARTED" <<endl;
                 running = true;
+		gpioSetValue(redLED, on);
 		while(value==high) {
 			gpioGetValue(pushButton, &value) ;
 		}
@@ -95,7 +98,7 @@ int main(int argc, char *argv[]){
     }
 
     cout << "Logging Finished" << endl;
-    /* gpioUnexport(redLED);     // unexport the LED */
+    gpioUnexport(redLED);     // unexport the LED */
     gpioUnexport(pushButton);      // unexport the push button
     return 0;
 }

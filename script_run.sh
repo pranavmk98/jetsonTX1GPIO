@@ -5,4 +5,4 @@ source devel/setup.bash
 ls
 cd ../../
 roslaunch robobuggy transistor.launch &
-rosbag record -a
+rosbag record -a &
