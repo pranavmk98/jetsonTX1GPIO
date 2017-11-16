@@ -10,6 +10,8 @@
 #include <string>
 #include <unistd.h>
 #include "jetsonGPIO.h"
+#include <sstream>
+
 using namespace std;
 
 int getkey() {
@@ -38,6 +40,19 @@ int getkey() {
 int main(int argc, char *argv[]){
 
 //    cout << "Starting Logs" << endl;
+    if (argc != 3) {
+        cout << ("Need 3 arguments") << endl;
+	return 1;
+    }
+
+    std::string date;
+    std::string day;
+    date = argv[1];
+    day = argv[2];
+
+    std::ostringstream oss;
+
+    int counter = 1;
 
     int redLED = 398;     // Ouput */
     int pushButton = 481; // Input
@@ -50,17 +65,6 @@ int main(int argc, char *argv[]){
     // Reverse the button wiring; this is for when the button is wired
     // with a pull up resistor
     // gpioActiveLow(pushButton, true);
-
-
-    // Flash the LED 5 times
-    /*for(int i=0; i<5; i++){
-        cout << "Setting the LED on" << endl;
-        gpioSetValue(redLED, on);
-        usleep(200000);         // on for 200ms
-        cout << "Setting the LED off" << endl;
-        gpioSetValue(redLED, off);
-        usleep(200000);         // off for 200ms
-    }*/
 
     // Wait for the push button to be pressed
     cout << "Please press the button! ESC key quits the program" << endl;
@@ -76,7 +80,7 @@ int main(int argc, char *argv[]){
         //cout << "Button " << value << endl;
         if (value==high) {
             if (running) {
-                system("./script_stop.sh");
+                system("./script_stop.sh ");
 		cout<<"Logs STOPPED"<<endl;
                 running = false;
 		gpioSetValue(redLED, off);
@@ -84,10 +88,12 @@ int main(int argc, char *argv[]){
 			gpioGetValue(pushButton, &value) ;
 		}
             } else {
-                system("./script_run.sh");
+                oss << "./script_run.sh " << date << " " << day << " " << counter;
+                system(oss.str().c_str());
                 cout<<"Logs STARTED" <<endl;
                 running = true;
 		gpioSetValue(redLED, on);
+                counter += 1;
 		while(value==high) {
 			gpioGetValue(pushButton, &value) ;
 		}
