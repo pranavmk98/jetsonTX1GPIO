@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
 
 //    cout << "Starting Logs" << endl;
     if (argc != 3) {
-        cout << ("Need 3 arguments") << endl;
+        cout << ("Need 2 arguments: date and day") << endl;
 	return 1;
     }
 
@@ -54,14 +54,25 @@ int main(int argc, char *argv[]){
 
     int counter = 1;
 
-    int redLED = 398;     // Ouput */
+    int greenLED = 398; // LED to acknowledge button press
+    int roscoreLED = 298; // LED to signify roscore is running
+    int rosbagLED = 388; // LED to signify rosbag is running
+
     int pushButton = 481; // Input
-    // Make the button and led available in user space
-    gpioUnexport(redLED);
+    // Make the button and LEDs available in user space
+    gpioUnexport(greenLED);
+    gpioUnexport(roscoreLED);
+    gpioUnexport(rosbagLED);
+
     gpioExport(pushButton);
-    gpioExport(redLED); 
-    gpioSetDirection(pushButton,inputPin) ;
-    gpioSetDirection(redLED,outputPin) ;
+    gpioExport(greenLED);
+    gpioExport(roscoreLED);
+    gpioExport(rosbagLED);
+
+    gpioSetDirection(pushButton, inputPin);
+    gpioSetDirection(greenLED, outputPin);
+    gpioSetDirection(roscoreLED, outputPin);
+    gpioSetDirection(rosbagLED, outputPin);
     // Reverse the button wiring; this is for when the button is wired
     // with a pull up resistor
     // gpioActiveLow(pushButton, true);
@@ -73,7 +84,7 @@ int main(int argc, char *argv[]){
     //    ledValue = low ; 
     bool running = false;
     // Turn off the LED
-    gpioSetValue(redLED,low) ; 
+    gpioSetValue(greenLED,low) ; 
     while(getkey() != 27) {
         gpioGetValue(pushButton, &value) ;
         // Useful for debugging
@@ -81,30 +92,34 @@ int main(int argc, char *argv[]){
         if (value==high) {
             if (running) {
                 system("./script_stop.sh ");
-		cout<<"Logs STOPPED"<<endl;
+        		cout<<"Logs STOPPED"<<endl;
                 running = false;
-		gpioSetValue(redLED, off);
-		while(value==high) {
-			gpioGetValue(pushButton, &value) ;
-		}
+        		gpioSetValue(roscoreLED, off);
+        		gpioSetValue(rosbagLED, off);
+        		while(value==high) {
+		        	gpioGetValue(pushButton, &value) ;
+		        }
             } else {
                 oss << "./script_run.sh " << date << " " << day << " " << counter;
                 system(oss.str().c_str());
                 cout<<"Logs STARTED" <<endl;
                 running = true;
-		gpioSetValue(redLED, on);
+        		gpioSetValue(greenLED, on);
+        		gpioSetValue(roscoreLED, on);
+        		gpioSetValue(rosbagLED, on);
                 counter += 1;
-		while(value==high) {
-			gpioGetValue(pushButton, &value) ;
-		}
+		        while(value==high) {
+			        gpioGetValue(pushButton, &value) ;
+        		}
             }
-            // button is pressed ; turn the LED on
+        } else {
+            gpioSetValue(greenLED, off);
         }
         usleep(1000); // sleep for a millisecond
     }
 
     cout << "Logging Finished" << endl;
-    gpioUnexport(redLED);     // unexport the LED */
+    gpioUnexport(greenLED);     // unexport the LED */
     gpioUnexport(pushButton);      // unexport the push button
     return 0;
 }
