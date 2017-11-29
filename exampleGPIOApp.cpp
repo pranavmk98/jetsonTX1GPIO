@@ -90,6 +90,7 @@ int main(int argc, char *argv[]){
         // Useful for debugging
         //cout << "Button " << value << endl;
         if (value==high) {
+            gpioSetValue(greenLED, on);
             if (running) {
                 system("./script_stop.sh ");
         		cout<<"Logs STOPPED"<<endl;
@@ -104,7 +105,6 @@ int main(int argc, char *argv[]){
                 system(oss.str().c_str());
                 cout<<"Logs STARTED" <<endl;
                 running = true;
-        		gpioSetValue(greenLED, on);
         		gpioSetValue(roscoreLED, on);
         		gpioSetValue(rosbagLED, on);
                 counter += 1;
