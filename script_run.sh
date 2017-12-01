@@ -1,11 +1,11 @@
 #!/bin/bash
 source /opt/ros/kinetic/setup.bash
-cd ~/RoboBuggy/Software/logs/$1
-source devel/setup.bash
 ls
-cd ../../
+cd ~/RoboBuggy/Software/real_time/ROS_RoboBuggy/
+source devel/setup.bash
 roslaunch robobuggy transistor.launch &
 
+cd ~/RoboBuggy/Software/logs/$1
 
 i=0
 arr1=($(for f in *.bag; do n=${f%.*}; num=${n: -1}; array[$i]=$num; i=$((i+1)); echo $num; done | sort))

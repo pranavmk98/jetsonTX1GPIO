@@ -14,6 +14,19 @@
 
 using namespace std;
 
+std::string exec(char* cmd) {
+    FILE* pipe = popen(cmd, "r");
+    if (!pipe) return "ERROR";
+    char buffer[128];
+    std::string result = "";
+    while(!feof(pipe)) {
+        if(fgets(buffer, 128, pipe) != NULL)
+            result += buffer;
+    }
+    pclose(pipe);
+    return result;
+}
+
 int getkey() {
     int character;
     struct termios orig_term_attr;
@@ -58,6 +71,10 @@ int main(int argc, char *argv[]){
     int roscoreLED = 298; // LED to signify roscore is running
     int rosbagLED = 388; // LED to signify rosbag is running
 
+    char*  rosbagchk = "if ps -e | grep \"rosbag\" > \\dev\\null \n then echo 1 \n else echo 0 \n fi";
+    char*  roscorechk = "if ps -e | grep \"roslaunch\" > \\dev\\null \n then echo 1 \n else echo 0 \n fi";
+    cout<<atoi(exec(rosbagchk).c_str())<<endl;
+
     int pushButton = 481; // Input
     // Make the button and LEDs available in user space
     gpioUnexport(greenLED);
@@ -95,8 +112,6 @@ int main(int argc, char *argv[]){
                 system("./script_stop.sh ");
         		cout<<"Logs STOPPED"<<endl;
                 running = false;
-        		gpioSetValue(roscoreLED, off);
-        		gpioSetValue(rosbagLED, off);
         		while(value==high) {
 		        	gpioGetValue(pushButton, &value) ;
 		        }
@@ -105,8 +120,6 @@ int main(int argc, char *argv[]){
                 system(oss.str().c_str());
                 cout<<"Logs STARTED" <<endl;
                 running = true;
-        		gpioSetValue(roscoreLED, on);
-        		gpioSetValue(rosbagLED, on);
                 counter += 1;
 		        while(value==high) {
 			        gpioGetValue(pushButton, &value) ;
@@ -115,6 +128,14 @@ int main(int argc, char *argv[]){
         } else {
             gpioSetValue(greenLED, off);
         }
+	if(atoi(exec(roscorechk).c_str()))
+            gpioSetValue(roscoreLED, on);
+        else
+            gpioSetValue(roscoreLED, off);
+	if(atoi(exec(rosbagchk).c_str()))
+            gpioSetValue(rosbagLED, on);
+        else
+            gpioSetValue(rosbagLED, off);
         usleep(1000); // sleep for a millisecond
     }
 
